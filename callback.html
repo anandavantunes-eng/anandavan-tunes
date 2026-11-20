@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth Callback — Anandavan Tunes</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fdfaf5;
+      color: #24323d;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      max-width: 640px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e5e9ec;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(36, 50, 61, 0.05);
+    }
+    h1 { margin: 0 0 8px; font-size: 22px; }
+    p { margin: 0 0 16px; color: #526370; font-size: 14px; }
+    code {
+      display: block;
+      background: #f4f7f6;
+      border: 1px solid #dce5e1;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      word-break: break-all;
+      margin-bottom: 14px;
+    }
+    button {
+      background: #3d7a64;
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .ok { color: #2b6e52; font-size: 13px; margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Anandavan Tunes — OAuth Authorization</h1>
+    <p id="status">Checking redirect parameters...</p>
+    <code id="codeBox" style="display:none;"></code>
+    <div>
+      <button id="copyBtn" style="display:none;">Copy Authorization Code</button>
+      <span id="copied" class="ok"></span>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const err = params.get("error_description") || params.get("error");
+    const statusEl = document.getElementById("status");
+    const codeBox = document.getElementById("codeBox");
+    const copyBtn = document.getElementById("copyBtn");
+    const copiedEl = document.getElementById("copied");
+
+    if (code) {
+      statusEl.textContent = "Authorization succeeded! Copy this one-time code and exchange it locally for your access token (never share it publicly):";
+      codeBox.textContent = code;
+      codeBox.style.display = "block";
+      copyBtn.style.display = "inline-block";
+      copyBtn.onclick = async () => {
+        await navigator.clipboard.writeText(code);
+        copiedEl.textContent = "Copied!";
+      };
+    } else if (err) {
+      statusEl.textContent = "Authorization error: " + err;
+    } else {
+      statusEl.textContent = "No authorization code found in this URL yet. Start the OAuth flow from your local CLI.";
+    }
+  </script>
+</body>
+</html>
